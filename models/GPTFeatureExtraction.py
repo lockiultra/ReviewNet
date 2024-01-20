@@ -6,7 +6,7 @@ class GPTFeatureExtraction:
     def __init__(self, embedding_size=768, model='ai-forever/rugpt3small_based_on_gpt2'):
         self.embedding_size = embedding_size
         self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-        self.feature_extraction_pipeline = pipeline(task='feature-extraction', model=model, device=self.device)
+        self.feature_extraction_pipeline = pipeline(task='feature-extraction', model=model, device=self.device, truncation=True, padding=True)
 
     def __mean_pooling(self, model_output):
         emb_sum = torch.zeros(self.embedding_size)
