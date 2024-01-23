@@ -1,5 +1,7 @@
 from models import ReviewNet, ReviewsDataset
 
+import sys
+
 import numpy as np
 import pandas as pd
 import evaluate
@@ -60,6 +62,7 @@ def train(train_loader: DataLoader, test_loader: DataLoader, metric: str='f1', n
                 f1_scores.append(get_metric_score(net, metric, test_loader))
 
     print(f'\nModel was trained, loss - {loss.data:.4f}')
+    net.metric_scores = f1_scores
     torch.save(net.state_dict(), './ReviewNet.model')
     return f1_scores
 
@@ -74,4 +77,5 @@ def main(path_to_data: str):
     train(train_loader, test_loader)
 
 if __name__ == '__main__':
-    main()
+    path_to_data = sys.argv[1]
+    main(path_to_data)

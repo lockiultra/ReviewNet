@@ -6,6 +6,7 @@ class ReviewNet(nn.Module):
     self.hidden_size = hidden_size
     self.input_size = input_size
     self.output_size = output_size
+    self.metric_scores = None
     self.base_net = nn.Sequential(
         nn.Linear(self.input_size, self.hidden_size),
         nn.BatchNorm1d(self.hidden_size),
