@@ -68,12 +68,12 @@ def train(train_loader: DataLoader, test_loader: DataLoader, metric: str='f1', n
 
 def main(path_to_data: str):
     data = pd.read_csv(path_to_data)
-    X = data.drop(['rating'], sxis=1)
+    X = data.drop(['rating'], axis=1)
     y= data['rating']
     X_train, X_test, y_train, y_test = get_train_test_split(X, y)
     train_dataset, test_dataset = get_train_test_datasets(X_train, X_test, y_train, y_test)
-    train_loader = DataLoader(train_dataset, batch_size=)
-    test_loader = DataLoader(test_dataset)
+    train_loader = DataLoader(train_dataset, batch_size=32)
+    test_loader = DataLoader(test_dataset, batch_size=32)
     train(train_loader, test_loader)
 
 if __name__ == '__main__':
