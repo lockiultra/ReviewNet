@@ -28,4 +28,5 @@ models/ReviewNet.py
 model_train.py
 ``` 
 В качестве метрики качества итоговой модели была выбрана f1_score на отложенной выборке, результаты представлены на графике:
+
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/yf25MwT/image.png" alt="image" border="0"></a>
