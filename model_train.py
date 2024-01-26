@@ -37,13 +37,14 @@ def get_metric_score(model: ReviewNet, metric: str, test_loader: DataLoader) -> 
             y_pred = torch.argmax(y_pred, dim=1)
             metric_score = metric_fn.compute(predictions=y_pred, references=y_batch, average='weighted')
             scores.append(metric_score[metric])
-    return np.sum(scores) / len(scores)
+    metric_score = np.sum(scores) / len(scores)
+    with open('./metric_scores.txt', 'a') as f:
+        f.write(f'{metric_score}\n')
 
-def train(train_loader: DataLoader, test_loader: DataLoader, metric: str='f1', num_epochs: int=3) -> list:
+def train(train_loader: DataLoader, test_loader: DataLoader, metric: str='f1', num_epochs: int=3) -> None:
     net = ReviewNet()
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=3e-4)
-    f1_scores = []
 
     for epoch in range(num_epochs):
         print(f'\n========== epoch {epoch + 1} ==========\n')
@@ -55,20 +56,18 @@ def train(train_loader: DataLoader, test_loader: DataLoader, metric: str='f1', n
             y_pred = net(X_batch)
             loss = loss_fn(y_pred, y_batch)
             loss.backward()
-            print(f'Batch {batch_idx}/{len(train_loader)}, batch loss - {loss.data:.4f}')
+            print(f'Batch {batch_idx+1}/{len(train_loader)}, batch loss - {loss.data:.4f}')
             optimizer.step()
 
             if batch_idx % 1000 == 0:
-                f1_scores.append(get_metric_score(net, metric, test_loader))
+                get_metric_score(net, metric, test_loader)
 
     print(f'\nModel was trained, loss - {loss.data:.4f}')
-    net.metric_scores = f1_scores
     torch.save(net.state_dict(), './ReviewNet.model')
-    return f1_scores
 
 def main(path_to_data: str):
     data = pd.read_csv(path_to_data)
-    X = data.drop(['rating'], axis=1)
+    X = data.drop(['index', 'rating'], axis=1)
     y= data['rating']
     X_train, X_test, y_train, y_test = get_train_test_split(X, y)
     train_dataset, test_dataset = get_train_test_datasets(X_train, X_test, y_train, y_test)
